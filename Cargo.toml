@@ -1,0 +1,8 @@
+# [package]
+# name = "rusty_crab"
+# version = "0.1.0"
+# edition = "2024"
+
+[workspace]
+members = ["tasks/easy-tasks"]
+resolver = "3"
