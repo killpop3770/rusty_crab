@@ -11,7 +11,10 @@ fn main() {
     bubble_sort(&mut test_array);
     println!("after bubble_sort: {:?}", test_array);
 
-    let target = 234;
+    let target = -3180;
     let result = binary_search(&test_array, target);
-    println!("result binary search: {}", result);
+    match result {
+        Some(res) => println!("result binary search: {}", res),
+        None => println!("not found target in array"),
+    }
 }

@@ -1,21 +1,22 @@
 use std::cmp::Ordering;
 
-pub fn binary_search(array: &[i32], target: i32) -> usize {
+pub fn binary_search(array: &[i32], target: i32) -> Option<usize> {
+    if array.is_empty() {
+        return None;
+    }
+
     let mut min_id = 0;
     let mut max_id = array.len() - 1;
-
-    if array.len() == 0 || array.len() == 1 {
-        return 0;
-    }
 
     while min_id <= max_id {
         let current_id = (min_id + max_id) / 2;
         match target.cmp(&array[current_id]) {
-            Ordering::Less => {
-                max_id = current_id - 1;
-            }
+            Ordering::Less => match current_id.checked_sub(1) {
+                Some(id) => max_id = id,
+                None => break,
+            },
             Ordering::Equal => {
-                return current_id;
+                return Some(current_id);
             }
             Ordering::Greater => {
                 min_id = current_id + 1;
@@ -23,5 +24,5 @@ pub fn binary_search(array: &[i32], target: i32) -> usize {
         }
     }
 
-    return 0;
+    return None;
 }
