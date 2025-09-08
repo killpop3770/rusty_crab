@@ -56,6 +56,7 @@ pub fn search_insert_position(array: &[i32], target: i32) -> i32 {
         true => expected_id = min_id as i32,      // if min_id > max_id
         false => expected_id = min_id as i32 - 1, // if min_id < max_id
     }
+    // or just: expected_id = min_id for bound [0..x+1] index
 
     return expected_id;
 }
