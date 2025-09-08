@@ -114,6 +114,15 @@ impl<T> CommonVec<T> {
     }
 }
 
+impl<T> Drop for CommonVec<T> {
+    fn drop(&mut self) {
+        let layout = Layout::array::<T>(self.capacity).unwrap();
+        unsafe {
+            dealloc(self.pointer as *mut u8, layout);
+        }
+    }
+}
+
 #[cfg(test)]
 mod test_common_vec {
 
