@@ -20,7 +20,7 @@ impl<T> CommonVec<T> {
         };
     }
 
-    pub fn new_with_capacity(capacity_size: usize) -> CommonVec<T> {
+    pub fn with_capacity(capacity_size: usize) -> CommonVec<T> {
         return CommonVec {
             length: 0,
             capacity: capacity_size,
@@ -60,6 +60,17 @@ impl<T> CommonVec<T> {
         }
     }
 
+    pub fn get_mut(&self, index: usize) -> Option<&mut T> {
+        if self.check_bounds(index) {
+            unsafe {
+                let target_pointer = self.pointer.add(index); // 0 1 2 3 <- find target_index => 3 * size_of(T) == *mut T 
+                return Some(&mut *target_pointer);
+            }
+        } else {
+            return None;
+        }
+    }
+
     pub fn pop(&mut self) -> Option<&T> {
         match self.length {
             0 => None,
@@ -68,6 +79,16 @@ impl<T> CommonVec<T> {
                 self.decrease_length();
                 return Some(&*target_pointer);
             },
+        }
+    }
+
+    pub fn set(&mut self, index: usize, value: T) {
+        if index < self.length {
+            unsafe {
+                std::ptr::write(self.pointer.add(index), value);
+            }
+        } else {
+            panic!("Index out of bounds");
         }
     }
 
@@ -123,6 +144,41 @@ impl<T> Drop for CommonVec<T> {
     }
 }
 
+pub struct CommonVecIntoIter<T> {
+    vec: CommonVec<T>,
+    current: usize,
+    end: usize,
+}
+
+impl<T> Iterator for CommonVecIntoIter<T> {
+    type Item = T;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.current >= self.end {
+            None
+        } else {
+            unsafe {
+                let item = std::ptr::read(self.vec.pointer.add(self.current));
+                self.current += 1;
+                Some(item)
+            }
+        }
+    }
+}
+
+impl<T> IntoIterator for CommonVec<T> {
+    type Item = T;
+    type IntoIter = CommonVecIntoIter<T>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        CommonVecIntoIter {
+            end: self.length,
+            vec: self,
+            current: 0,
+        }
+    }
+}
+
 #[cfg(test)]
 mod test_common_vec {
 
@@ -134,7 +190,7 @@ mod test_common_vec {
         assert_eq!(common_vec.length(), 0);
         assert_eq!(common_vec.capacity(), 0);
 
-        let common_vec: CommonVec<i32> = CommonVec::new_with_capacity(10);
+        let common_vec: CommonVec<i32> = CommonVec::with_capacity(10);
         assert_eq!(common_vec.capacity(), 10);
     }
 

@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use crate::{
     array_searching::{binary_search, search_insert_position},
     array_sorting::{bubble_sort, merge_sort},
@@ -5,6 +7,7 @@ use crate::{
 
 mod array_searching;
 pub mod array_sorting;
+pub mod common_hash_map;
 mod common_vec;
 
 fn main() {
