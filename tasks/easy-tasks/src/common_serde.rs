@@ -77,7 +77,7 @@ impl<'a> Deserializer<'a> for &'a [u8] {
             return Err(SerializeError::InvalidState);
         }
 
-        let (int_bytes, rest) = self.split_at(4);
+        let (int_bytes, rest) = self.split_at(I32_BYTE_BOUNDS);
         *self = rest;
 
         Ok(i32::from_le_bytes(int_bytes.try_into().unwrap()))
