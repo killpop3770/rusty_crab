@@ -6,6 +6,7 @@ use crate::{
 };
 
 mod best_time_to_buy_and_sell_stock;
+mod contains_duplicate;
 pub mod kth_largest_element_in_a_stream;
 pub mod search_2d_matrix;
 
