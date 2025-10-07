@@ -1,0 +1,7 @@
+[package]
+name = "common_serde"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+common_serde_derive = { version = "0.1.0", path = "../common_serde_derive" }

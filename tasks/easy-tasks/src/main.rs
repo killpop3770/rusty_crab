@@ -3,8 +3,10 @@ use std::collections::HashMap;
 use crate::{
     array_searching::{binary_search, search_insert_position},
     array_sorting::{bubble_sort, merge_sort},
-    common_serde::{Deserialize, MyStruct, Serialize, Serializer},
+    common_serde::MyStruct,
 };
+use ::common_serde::Deserialize;
+use ::common_serde::Serialize;
 
 mod array_searching;
 pub mod array_sorting;
@@ -39,16 +41,25 @@ fn main() {
     // let result = search_insert_position(&test_array, target);
     // println!("result search_insert_position: {}", result)
 
-    let my_struct = MyStruct {
+    let inner_struct = MyStruct {
+        value_bool: true,
         value_i32: 2147483647,
         value_string: String::from("Hello, friend!"),
+        my_struct: None,
+    };
+
+    let my_struct = MyStruct {
+        value_bool: false,
+        value_i32: -2147483647,
+        value_string: String::from("Hello, world!"),
+        my_struct: Some(Box::new(inner_struct)),
     };
 
     let mut serializer_buffer = Vec::<u8>::new();
     if let Err(error) = my_struct.serialize(&mut serializer_buffer) {
         println!("Some error occurred with serialization: {:?} !", error);
     }
-    println!("Serialized data: {:?}", serializer_buffer.clone().finish());
+    println!("Serialized data: {:?}", serializer_buffer.clone());
 
     let mut deserializer_buffer = serializer_buffer.as_slice();
     match MyStruct::deserialize(&mut deserializer_buffer) {
