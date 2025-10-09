@@ -2,13 +2,14 @@ use std::vec;
 
 use crate::{
     best_time_to_buy_and_sell_stock::max_profit, kth_largest_element_in_a_stream::KthLargest,
-    search_2d_matrix::search_matrix,
+    search_2d_matrix::search_matrix, valid_palindrome::Solution,
 };
 
 mod best_time_to_buy_and_sell_stock;
 mod contains_duplicate;
 pub mod kth_largest_element_in_a_stream;
 pub mod search_2d_matrix;
+mod valid_palindrome;
 
 fn main() {
     // println!("Hello, world!");
@@ -66,15 +67,19 @@ fn main() {
     // }
     // assert_eq!(vec![-1, 0, 0, 0, 1], result);
 
-    let prices = vec![7, 1, 5, 3, 6, 4];
-    let result = max_profit(prices);
-    println!("result {}", result);
+    // let prices = vec![7, 1, 5, 3, 6, 4];
+    // let result = max_profit(prices);
+    // println!("result {}", result);
 
-    let prices = vec![7, 6, 4, 3, 1];
-    let result = max_profit(prices);
-    println!("result {}", result);
+    // let prices = vec![7, 6, 4, 3, 1];
+    // let result = max_profit(prices);
+    // println!("result {}", result);
 
-    let prices = vec![9, 1, 200, 4, 3, 1];
-    let result = max_profit(prices);
+    // let prices = vec![9, 1, 200, 4, 3, 1];
+    // let result = max_profit(prices);
+    // println!("result {}", result);
+
+    let pal = "A man, a plan, a canal: Panama".to_string();
+    let result = Solution::is_palindrome(pal);
     println!("result {}", result);
 }
