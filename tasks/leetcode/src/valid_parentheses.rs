@@ -12,24 +12,34 @@ impl Solution {
             match elem {
                 '(' | '{' | '[' => stack.push(elem),
                 ')' => {
-                    if stack.pop() != Some('(') {
+                    if Self::is_not_match_pattern(&mut stack, '(') {
                         return false;
                     }
                 }
                 '}' => {
-                    if stack.pop() != Some('{') {
+                    if Self::is_not_match_pattern(&mut stack, '{') {
                         return false;
                     }
                 }
                 ']' => {
-                    if stack.pop() != Some('[') {
+                    if Self::is_not_match_pattern(&mut stack, '[') {
                         return false;
                     }
                 }
-                _ => continue,
+                _ => {
+                    continue;
+                }
             }
         }
 
         stack.is_empty()
+    }
+
+    fn is_not_match_pattern(stack: &mut Vec<char>, pattern: char) -> bool {
+        if let Some(e) = stack.pop() {
+            e != pattern
+        } else {
+            false
+        }
     }
 }

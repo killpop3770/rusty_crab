@@ -88,7 +88,7 @@ fn main() {
     let s = "()[]{}".to_string();
     let s = "()[{]{}".to_string();
     let s = "([)]".to_string();
-    // let s = "([])".to_string();
+    let s = "([])".to_string();
     let result = Solution2::is_valid(s);
     println!("result {:?}", result);
 }
