@@ -1,6 +1,6 @@
 use crate::model::task::Task;
 
-pub trait Storage {
+pub trait Storage: Send + Sync {
     fn create(&self, value: String) -> Result<Task, StorageError>;
     fn list(&self) -> Result<Vec<Task>, StorageError>;
     fn read(&self, id: u32) -> Result<Task, StorageError>;

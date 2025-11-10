@@ -4,6 +4,7 @@ use crate::{
 };
 
 pub mod db;
+pub mod gui;
 pub mod model;
 
 #[derive(Default)]

@@ -2,13 +2,16 @@ use clap::{Parser, Subcommand};
 
 #[derive(Parser)]
 #[command(version, about)]
-pub struct Cli {
+pub struct Args {
     #[command(subcommand)]
-    pub command: Commands,
+    pub command: Option<Command>,
+
+    #[arg(long, short = 'g')]
+    pub gui_mode: bool,
 }
 
 #[derive(Subcommand)]
-pub enum Commands {
+pub enum Command {
     Create { text: String },
     Read { id: u32 },
     Update { id: u32, text: String },
