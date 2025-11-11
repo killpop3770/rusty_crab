@@ -14,10 +14,10 @@ async fn main() -> anyhow::Result<()> {
     let todo_app = CommonTodo::new(storage);
 
     if args.gui_mode {
-        gui_mode().await
+        gui_mode(todo_app).await
     } else if let Some(command) = args.command {
         cli_mode(command, &todo_app)
     } else {
-        gui_mode().await
+        gui_mode(todo_app).await
     }
 }
