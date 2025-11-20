@@ -1,12 +1,17 @@
-use std::vec;
+use std::{collections::BinaryHeap, vec};
 
 use crate::{
-    best_time_to_buy_and_sell_stock::max_profit, kth_largest_element_in_a_stream::KthLargest,
-    search_2d_matrix::search_matrix, valid_palindrome::Solution,
+    best_time_to_buy_and_sell_stock::max_profit,
+    climbing_stairs::{climb_stairs, climb_stairs_with_tree, visualize_heap},
+    kth_largest_element_in_a_stream::KthLargest,
+    search_2d_matrix::search_matrix,
+    valid_palindrome::Solution,
     valid_parentheses::Solution as Solution2,
 };
 
 mod best_time_to_buy_and_sell_stock;
+pub mod climbing_stairs;
+pub(crate) mod coin_change;
 mod contains_duplicate;
 pub mod kth_largest_element_in_a_stream;
 pub mod search_2d_matrix;
@@ -85,10 +90,30 @@ fn main() {
     // let result = Solution::is_palindrome(pal);
     // println!("result {}", result);
 
-    let s = "()[]{}".to_string();
-    let s = "()[{]{}".to_string();
-    let s = "([)]".to_string();
-    let s = "([])".to_string();
-    let result = Solution2::is_valid(s);
-    println!("result {:?}", result);
+    // let s = "()[]{}".to_string();
+    // let s = "()[{]{}".to_string();
+    // let s = "([)]".to_string();
+    // let s = "([])".to_string();
+    // let result = Solution2::is_valid(s);
+    // println!("result {:?}", result);
+
+    // let stairs = 4;
+    // let result = climb_stairs(stairs);
+    // println!("result {:?}", result);
+
+    // let mut binary_tree = BinaryHeap::new();
+    // binary_tree.push(5);
+    // binary_tree.push(3);
+    // binary_tree.push(7);
+    // binary_tree.push(1);
+    // visualize_heap(&binary_tree);
+    // println!()
+
+    // climb_stairs_with_tree(4);
+    let coins = vec![186, 419, 83, 408];
+    let target = 6249;
+    // let coins = vec![1, 2];
+    // let target = 100;
+    let count = coin_change::coin_change_r(coins, target);
+    println!("{count}");
 }
