@@ -9,17 +9,17 @@ use axum::{
 use serde::Deserialize;
 use std::sync::Arc;
 
-use crate::{CommonTodo, db::Storage, model::task::Task, ready_or_not};
+use crate::{CommonTodo, db::AsyncStorage, model::task::Task, ready_or_not};
 
-type TodoApp = Arc<dyn Storage + Send + Sync + 'static>;
+type TodoApp = Arc<dyn AsyncStorage + Send + Sync + 'static>;
 
 pub async fn gui_mode<S>(todo_app: CommonTodo<S>) -> anyhow::Result<()>
 where
-    S: Storage + Send + Sync + 'static,
+    S: AsyncStorage + Send + Sync + 'static,
 {
     println!("gui mode is active");
 
-    let shared_state: Arc<dyn Storage + Send + Sync + 'static> = Arc::new(todo_app.storage);
+    let shared_state: Arc<dyn AsyncStorage + Send + Sync + 'static> = Arc::new(todo_app.storage);
 
     let app = Router::new()
         .route("/", get(handler))
@@ -50,12 +50,12 @@ async fn create_task_handler(
     State(todo_app): State<TodoApp>,
     Form(payload): Form<CreateTaskForm>,
 ) -> Redirect {
-    todo_app.create(payload.value).unwrap();
+    todo_app.create(payload.value).await.unwrap();
     Redirect::to("/tasks?success=created")
 }
 
 async fn read_all_tasks_handler(State(todo_app): State<TodoApp>) -> Html<String> {
-    let tasks = todo_app.list().unwrap();
+    let tasks = todo_app.list().await.unwrap();
     Html(view_all_tasks(tasks))
 }
 
@@ -63,7 +63,7 @@ async fn read_task_by_id_handler(
     State(todo_app): State<TodoApp>,
     Path(id): Path<u32>,
 ) -> Html<String> {
-    let task = todo_app.read(id).unwrap();
+    let task = todo_app.read(id).await.unwrap();
     Html(format!(
         "<h2>Your task #{} is {}: {}</h2>",
         task.id,
@@ -73,7 +73,7 @@ async fn read_task_by_id_handler(
 }
 
 async fn show_edit_form(State(todo_app): State<TodoApp>, Path(id): Path<u32>) -> Html<String> {
-    let task = todo_app.read(id).unwrap();
+    let task = todo_app.read(id).await.unwrap();
     Html(edit_task_form(&task))
 }
 
@@ -82,19 +82,19 @@ async fn update_task_handler(
     Path(id): Path<u32>,
     Form(payload): Form<UpdateTaskForm>,
 ) -> Redirect {
-    todo_app.update(id, payload.value).unwrap();
+    todo_app.update(id, payload.value).await.unwrap();
     Redirect::to("/tasks?success=updated")
 }
 
 async fn delete_task_handler(State(todo_app): State<TodoApp>, Path(id): Path<u32>) -> Redirect {
-    todo_app.delete(id).unwrap();
+    todo_app.delete(id).await.unwrap();
     Redirect::to("/tasks?success=deleted")
 }
 
 async fn mark_task_handler(State(todo_app): State<TodoApp>, Path(id): Path<u32>) -> Redirect {
-    let task = todo_app.read(id).unwrap();
+    let task = todo_app.read(id).await.unwrap();
     let mark = !task.is_ready;
-    todo_app.mark_ready_or_not(id, mark).unwrap();
+    todo_app.mark_ready_or_not(id, mark).await.unwrap();
     let path = format!("/tasks/{id}/edit");
     Redirect::to(&path)
 }

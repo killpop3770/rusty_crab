@@ -1,5 +1,5 @@
 use crate::{
-    db::{Storage, storage::StorageError},
+    db::{AsyncStorage, storage::StorageError},
     model::task::Task,
 };
 
@@ -10,41 +10,41 @@ pub mod model;
 #[derive(Default)]
 pub struct CommonTodo<S>
 where
-    S: Storage,
+    S: AsyncStorage,
 {
     storage: S,
 }
 
 impl<S> CommonTodo<S>
 where
-    S: Storage,
+    S: AsyncStorage,
 {
     pub fn new(storage: S) -> Self {
         Self { storage }
     }
 
-    pub fn create(&self, value: String) -> Result<Task, StorageError> {
-        self.storage.create(value)
+    pub async fn create(&self, value: String) -> Result<Task, StorageError> {
+        self.storage.create(value).await
     }
 
-    pub fn list(&self) -> Result<Vec<Task>, StorageError> {
-        self.storage.list()
+    pub async fn list(&self) -> Result<Vec<Task>, StorageError> {
+        self.storage.list().await
     }
 
-    pub fn read(&self, id: u32) -> Result<Task, StorageError> {
-        self.storage.read(id)
+    pub async fn read(&self, id: u32) -> Result<Task, StorageError> {
+        self.storage.read(id).await
     }
 
-    pub fn delete(&self, id: u32) -> Result<(), StorageError> {
-        self.storage.delete(id)
+    pub async fn delete(&self, id: u32) -> Result<(), StorageError> {
+        self.storage.delete(id).await
     }
 
-    pub fn update(&self, id: u32, value: String) -> Result<Task, StorageError> {
-        self.storage.update(id, value)
+    pub async fn update(&self, id: u32, value: String) -> Result<Task, StorageError> {
+        self.storage.update(id, value).await
     }
 
-    pub fn mark_ready_or_not(&self, id: u32, is_ready: bool) -> Result<Task, StorageError> {
-        self.storage.mark_ready_or_not(id, is_ready)
+    pub async fn mark_ready_or_not(&self, id: u32, is_ready: bool) -> Result<Task, StorageError> {
+        self.storage.mark_ready_or_not(id, is_ready).await
     }
 }
 

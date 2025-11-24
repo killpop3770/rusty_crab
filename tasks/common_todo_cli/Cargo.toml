@@ -12,3 +12,5 @@ thiserror = "2.0.17"
 anyhow = "1.0.100"
 tokio = { version = "1.0", features = ["full"] }
 axum = { version = "0.8.6", features = ["macros"] }
+sqlx = { version = "0.8.6", features = ["postgres", "runtime-tokio"] }
+async-trait = "0.1.89"
