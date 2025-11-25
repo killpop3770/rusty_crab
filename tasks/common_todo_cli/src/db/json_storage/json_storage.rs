@@ -25,6 +25,7 @@
 
 // impl JsonStorage {
 //     pub fn new() -> Result<Self, StorageError> {
+//         // TODO: redo file_path field
 //         let default_path = PathBuf::from("common_todo_db.json");
 
 //         if !default_path.exists() {

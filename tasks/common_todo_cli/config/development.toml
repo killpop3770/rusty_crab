@@ -1,0 +1,16 @@
+[json_storage]
+file_path = "common_todo_db.json"
+
+[postgres]
+address = "localhost:5432"
+username = "admin"
+password = "admin"
+database = "todoapp"
+table = "tasks"
+
+[mongodb]
+# address = "localhost:5432"
+# username = "admin"
+# password = "admin"
+# database = "todoapp"
+# collection = "tasks"

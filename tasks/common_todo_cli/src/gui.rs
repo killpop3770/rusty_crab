@@ -61,7 +61,7 @@ async fn read_all_tasks_handler(State(todo_app): State<TodoApp>) -> Html<String>
 
 async fn read_task_by_id_handler(
     State(todo_app): State<TodoApp>,
-    Path(id): Path<u32>,
+    Path(id): Path<i32>,
 ) -> Html<String> {
     let task = todo_app.read(id).await.unwrap();
     Html(format!(
@@ -72,26 +72,26 @@ async fn read_task_by_id_handler(
     ))
 }
 
-async fn show_edit_form(State(todo_app): State<TodoApp>, Path(id): Path<u32>) -> Html<String> {
+async fn show_edit_form(State(todo_app): State<TodoApp>, Path(id): Path<i32>) -> Html<String> {
     let task = todo_app.read(id).await.unwrap();
     Html(edit_task_form(&task))
 }
 
 async fn update_task_handler(
     State(todo_app): State<TodoApp>,
-    Path(id): Path<u32>,
+    Path(id): Path<i32>,
     Form(payload): Form<UpdateTaskForm>,
 ) -> Redirect {
     todo_app.update(id, payload.value).await.unwrap();
     Redirect::to("/tasks?success=updated")
 }
 
-async fn delete_task_handler(State(todo_app): State<TodoApp>, Path(id): Path<u32>) -> Redirect {
+async fn delete_task_handler(State(todo_app): State<TodoApp>, Path(id): Path<i32>) -> Redirect {
     todo_app.delete(id).await.unwrap();
     Redirect::to("/tasks?success=deleted")
 }
 
-async fn mark_task_handler(State(todo_app): State<TodoApp>, Path(id): Path<u32>) -> Redirect {
+async fn mark_task_handler(State(todo_app): State<TodoApp>, Path(id): Path<i32>) -> Redirect {
     let task = todo_app.read(id).await.unwrap();
     let mark = !task.is_ready;
     todo_app.mark_ready_or_not(id, mark).await.unwrap();

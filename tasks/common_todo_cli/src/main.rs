@@ -1,8 +1,9 @@
 pub mod cli;
 
 use clap::Parser;
-use common_todo_cli::{CommonTodo, db::postgresql_storage::PostgresStorage, gui::gui_mode};
-use sqlx::postgres::PgPoolOptions;
+#[cfg(feature = "postgres")]
+use common_todo_cli::StorageType;
+use common_todo_cli::{CommonTodo, StorageFactory, db::config::AppConfig, gui::gui_mode};
 
 use crate::cli::{Args, cli_mode};
 
@@ -11,21 +12,16 @@ async fn main() -> anyhow::Result<()> {
     println!("Hello, friend!");
 
     let args = Args::parse();
-    // let storage = JsonStorage::new()?;
 
-    let database_url = "postgresql://admin:admin@localhost:5432/todoapp".to_string();
-    let table_name = "tasks".to_string();
-    let pool = PgPoolOptions::new()
-        .connect(&database_url)
-        .await
-        .expect("Failed to connect to PostgreSQL");
+    let config = AppConfig::new().expect("Can not create app config");
 
-    println!("Hello, friend! 1");
-    let storage = PostgresStorage::new(pool, table_name);
-    storage.init_table().await.expect("Failed to init table");
+    #[cfg(feature = "postgres")]
+    let storage_type = StorageType::Postgres;
+
+    let storage = StorageFactory::create(storage_type, config).await?;
+
     let todo_app = CommonTodo::new(storage);
 
-    println!("Hello, friend! 2");
     if args.gui_mode {
         gui_mode(todo_app).await
     } else if let Some(command) = args.command {
@@ -35,5 +31,8 @@ async fn main() -> anyhow::Result<()> {
     }
 }
 
-// TODO: Создать конфиг файлы
-// TODO: Создать фабрики для создания подключений в зависимости от флага компиляции в main файле
+// TODO: вынести фабрику в отдельный файл
+// TODO: доделать фабрику и вынести зависимости для отдельных фич !
+// TODO: Вынести трейты, use_cases и базовые сущности в отдельный модуль core
+// TODO: separate to web_gui(with handlers) + routes
+// TODO: Для UI сделать новую фабрику?
