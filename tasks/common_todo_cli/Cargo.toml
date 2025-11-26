@@ -21,3 +21,4 @@ axum = { version = "0.8.6", features = ["macros"] }
 sqlx = { version = "0.8.6", features = ["postgres", "runtime-tokio"] }
 async-trait = "0.1.89"
 config = "0.15.19"
+mongodb = "3.4.1"

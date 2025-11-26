@@ -24,4 +24,8 @@ pub enum StorageError {
     SqlxError(#[from] sqlx::Error),
     #[error("Storage choice error")]
     StorageChoiceError(),
+    #[error("Config load error")]
+    ConfigLoadError(),
+    #[error("Unknown error occured by: {0}")]
+    UnknownError(String),
 }

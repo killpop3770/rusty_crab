@@ -1,9 +1,10 @@
+use async_trait::async_trait;
 use sqlx::postgres::PgPoolOptions;
 
 use crate::{
     db::{
-        AsyncStorage, config::AppConfig, postgres::postgres_storage::PostgresStorage,
-        storage::StorageError,
+        AsyncStorage, config::AppConfig, json_storage::json_storage::JsonStorage,
+        postgres::postgres_storage::PostgresStorage, storage::StorageError,
     },
     model::task::Task,
 };
@@ -66,23 +67,87 @@ pub enum StorageType {
     Mongodb,
 }
 
+pub enum StorageBackend {
+    Json(JsonStorage),
+    Postgres(PostgresStorage),
+    Mongodb,
+}
+
+#[async_trait]
+impl AsyncStorage for StorageBackend {
+    async fn create(&self, value: String) -> Result<Task, StorageError> {
+        match self {
+            StorageBackend::Json(s) => s.create(value).await,
+            StorageBackend::Postgres(s) => s.create(value).await,
+            StorageBackend::Mongodb => todo!(),
+        }
+    }
+    async fn list(&self) -> Result<Vec<Task>, StorageError> {
+        match self {
+            StorageBackend::Json(s) => s.list().await,
+            StorageBackend::Postgres(s) => s.list().await,
+            StorageBackend::Mongodb => todo!(),
+        }
+    }
+    async fn read(&self, id: i32) -> Result<Task, StorageError> {
+        match self {
+            StorageBackend::Json(s) => s.read(id).await,
+            StorageBackend::Postgres(s) => s.read(id).await,
+            StorageBackend::Mongodb => todo!(),
+        }
+    }
+    async fn delete(&self, id: i32) -> Result<(), StorageError> {
+        match self {
+            StorageBackend::Json(s) => s.delete(id).await,
+            StorageBackend::Postgres(s) => s.delete(id).await,
+            StorageBackend::Mongodb => todo!(),
+        }
+    }
+    async fn update(&self, id: i32, value: String) -> Result<Task, StorageError> {
+        match self {
+            StorageBackend::Json(s) => s.update(id, value).await,
+            StorageBackend::Postgres(s) => s.update(id, value).await,
+            StorageBackend::Mongodb => todo!(),
+        }
+    }
+    async fn mark_ready_or_not(&self, id: i32, is_ready: bool) -> Result<Task, StorageError> {
+        match self {
+            StorageBackend::Json(s) => s.mark_ready_or_not(id, is_ready).await,
+            StorageBackend::Postgres(s) => s.mark_ready_or_not(id, is_ready).await,
+            StorageBackend::Mongodb => todo!(),
+        }
+    }
+}
+
 pub struct StorageFactory;
 
 impl StorageFactory {
     pub async fn create(
         storage_type: StorageType,
         config: AppConfig,
-    ) -> Result<impl AsyncStorage, StorageError> {
+    ) -> Result<StorageBackend, StorageError> {
         match storage_type {
-            StorageType::Json => Ok(create_json_storage(config).await?),
-            StorageType::Postgres => Ok(create_postgres(config).await?),
-            StorageType::Mongodb => Ok(create_mongodb(config).await?),
+            StorageType::Json => {
+                let storage = create_json_storage(config).await?;
+                println!("StorageType::Json");
+                Ok(StorageBackend::Json(storage))
+            }
+            StorageType::Postgres => {
+                let storage = create_postgres_storage(config).await?;
+                println!("StorageType::Postgres");
+                Ok(StorageBackend::Postgres(storage))
+            }
+            StorageType::Mongodb => {
+                let _ = create_mongodb_storage(config).await?;
+                println!("StorageType::Mongodb");
+                Ok(StorageBackend::Mongodb)
+            }
         }
     }
 }
 
-async fn create_postgres(config: AppConfig) -> Result<PostgresStorage, StorageError> {
-    let pg_config = config.postgres.expect("Failed to load PostgreSQL config");
+async fn create_postgres_storage(config: AppConfig) -> Result<PostgresStorage, StorageError> {
+    let pg_config = config.postgres.ok_or(StorageError::ConfigLoadError())?;
     let db_url = format!(
         "postgresql://{}:{}@{}/{}",
         pg_config.username, pg_config.password, pg_config.address, pg_config.database
@@ -95,10 +160,13 @@ async fn create_postgres(config: AppConfig) -> Result<PostgresStorage, StorageEr
     Ok(storage)
 }
 
-async fn create_json_storage(config: AppConfig) -> Result<PostgresStorage, StorageError> {
-    todo!()
+async fn create_json_storage(config: AppConfig) -> Result<JsonStorage, StorageError> {
+    let json_config = config.json_storage.ok_or(StorageError::ConfigLoadError())?;
+    let path = json_config.file_path;
+    let storage = JsonStorage::new(path).await?;
+    Ok(storage)
 }
 
-async fn create_mongodb(config: AppConfig) -> Result<PostgresStorage, StorageError> {
+async fn create_mongodb_storage(_config: AppConfig) -> Result<PostgresStorage, StorageError> {
     todo!()
 }
