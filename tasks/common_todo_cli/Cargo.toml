@@ -4,10 +4,10 @@ version = "0.1.0"
 edition = "2024"
 
 [features]
-default = ["postgres"]
-
+default = []
 json = []
 postgres = []
+mongodb = []
 
 [dependencies]
 uuid = "1.18.1"
@@ -22,3 +22,4 @@ sqlx = { version = "0.8.6", features = ["postgres", "runtime-tokio"] }
 async-trait = "0.1.89"
 config = "0.15.19"
 mongodb = "3.4.1"
+futures-util = { version = "0.3", default-features = false, features = ["std"] }

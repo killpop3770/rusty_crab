@@ -13,9 +13,9 @@ pub struct Args {
 #[derive(Subcommand)]
 pub enum Command {
     Create { text: String },
-    Read { id: i32 },
-    Update { id: i32, text: String },
-    Delete { id: i32 },
+    Read { id: String },
+    Update { id: String, text: String },
+    Delete { id: String },
     List,
-    Mark { id: i32, is_ready: String },
+    Mark { id: String, is_ready: String },
 }

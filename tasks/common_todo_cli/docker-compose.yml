@@ -29,8 +29,36 @@ services:
     depends_on:
       - postgres
 
+  mongodb:
+    image: mongo:7.0
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin
+      MONGO_INITDB_DATABASE: todoapp
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+      # - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    networks:
+      - todoapp-network
+
+  mongo-express:
+    image: mongo-express:latest
+    container_name: todoapp-mongo-express
+    environment:
+      ME_CONFIG_MONGODB_URL: "mongodb://admin:admin@mongodb:27017/admin"
+      ME_CONFIG_BASICAUTH: "false"
+    ports:
+      - "8081:8081"
+    networks:
+      - todoapp-network
+    depends_on:
+      - mongodb
+
 volumes:
   postgres_data:
+  mongodb_data:
 
 networks:
   todoapp-network:

@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 
 use crate::{
-    db::{AsyncStorage, storage::StorageError},
+    db::{AsyncStorage, errors::StorageError},
     model::task::Task,
 };
 
@@ -55,7 +55,7 @@ impl AsyncStorage for JsonStorage {
         let mut inner_db = self.load_inner_db().await?;
         let id = inner_db.next_id;
 
-        let task = Task::new(id, value);
+        let task = Task::new(id.to_string(), value);
         inner_db.tasks.push(task.clone());
         inner_db.next_id += 1;
 
@@ -64,7 +64,7 @@ impl AsyncStorage for JsonStorage {
         Ok(task)
     }
 
-    async fn read(&self, id: i32) -> Result<Task, StorageError> {
+    async fn read(&self, id: String) -> Result<Task, StorageError> {
         let inner_db = self.load_inner_db().await?;
 
         let task = inner_db
@@ -77,7 +77,7 @@ impl AsyncStorage for JsonStorage {
         Ok(task)
     }
 
-    async fn update(&self, id: i32, value: String) -> Result<Task, StorageError> {
+    async fn update(&self, id: String, value: String) -> Result<Task, StorageError> {
         let mut inner_db = self.load_inner_db().await?;
 
         let task = inner_db
@@ -93,7 +93,7 @@ impl AsyncStorage for JsonStorage {
         Ok(result_task)
     }
 
-    async fn delete(&self, id: i32) -> Result<(), StorageError> {
+    async fn delete(&self, id: String) -> Result<(), StorageError> {
         let mut inner_db = self.load_inner_db().await?;
 
         let task_index = inner_db
@@ -114,7 +114,7 @@ impl AsyncStorage for JsonStorage {
         Ok(tasks)
     }
 
-    async fn mark_ready_or_not(&self, id: i32, is_ready: bool) -> Result<Task, StorageError> {
+    async fn mark_ready_or_not(&self, id: String, is_ready: bool) -> Result<Task, StorageError> {
         let mut inner_db = self.load_inner_db().await?;
 
         let task = inner_db

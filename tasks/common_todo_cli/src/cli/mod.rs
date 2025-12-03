@@ -26,12 +26,12 @@ pub async fn cli_mode<S: AsyncStorage>(
             Ok(())
         }
         Command::Update { id, text } => {
-            let _ = todo_app.update(id, text).await?;
+            let _ = todo_app.update(id.clone(), text).await?;
             println!("Task #{id} is updated !");
             Ok(())
         }
         Command::Delete { id } => {
-            todo_app.delete(id).await?;
+            todo_app.delete(id.clone()).await?;
             println!("Task #{id} is deleted !");
             Ok(())
         }
@@ -49,7 +49,7 @@ pub async fn cli_mode<S: AsyncStorage>(
         }
         Command::Mark { id, is_ready } => {
             let is_ready = is_ready.parse::<bool>()?;
-            let _ = todo_app.mark_ready_or_not(id, is_ready).await?;
+            let _ = todo_app.mark_ready_or_not(id.clone(), is_ready).await?;
             println!("Task #{id} is marked as {} !", ready_or_not(is_ready));
             Ok(())
         }

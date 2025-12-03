@@ -1,4 +1,4 @@
-use crate::db::{AsyncStorage, storage::StorageError};
+use crate::db::{AsyncStorage, errors::StorageError};
 use crate::model::task::Task;
 use async_trait::async_trait;
 use sqlx::PgPool;
@@ -67,7 +67,7 @@ impl AsyncStorage for PostgresStorage {
         Ok(items)
     }
 
-    async fn read(&self, id: i32) -> Result<crate::model::task::Task, StorageError> {
+    async fn read(&self, id: String) -> Result<crate::model::task::Task, StorageError> {
         let query = format!(
             "SELECT id, value, is_ready FROM {} WHERE id = $1",
             self.table_name
@@ -83,9 +83,9 @@ impl AsyncStorage for PostgresStorage {
         Ok(task)
     }
 
-    async fn delete(&self, id: i32) -> Result<(), StorageError> {
+    async fn delete(&self, id: String) -> Result<(), StorageError> {
         let query = format!("DELETE FROM {} WHERE id = $1", self.table_name);
-        let result = sqlx::query(&query).bind(id).execute(&self.pool).await?;
+        let result = sqlx::query(&query).bind(&id).execute(&self.pool).await?;
 
         if result.rows_affected() == 0 {
             return Err(StorageError::RecordNotFound { id });
@@ -96,7 +96,7 @@ impl AsyncStorage for PostgresStorage {
 
     async fn update(
         &self,
-        id: i32,
+        id: String,
         value: String,
     ) -> Result<crate::model::task::Task, StorageError> {
         let query = format!(
@@ -105,7 +105,7 @@ impl AsyncStorage for PostgresStorage {
         );
         let row = sqlx::query(&query)
             .bind(value)
-            .bind(id)
+            .bind(&id)
             .fetch_optional(&self.pool)
             .await?
             .ok_or(StorageError::RecordNotFound { id })?;
@@ -121,7 +121,7 @@ impl AsyncStorage for PostgresStorage {
 
     async fn mark_ready_or_not(
         &self,
-        id: i32,
+        id: String,
         is_ready: bool,
     ) -> Result<crate::model::task::Task, StorageError> {
         let query = format!(
@@ -130,7 +130,7 @@ impl AsyncStorage for PostgresStorage {
         );
         let row = sqlx::query(&query)
             .bind(is_ready)
-            .bind(id)
+            .bind(&id)
             .fetch_optional(&self.pool)
             .await?
             .ok_or(StorageError::RecordNotFound { id })?;
