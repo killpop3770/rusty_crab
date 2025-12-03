@@ -31,8 +31,9 @@ async fn main() -> anyhow::Result<()> {
     }
 }
 
-// cargo build --features "json" --no-default-features
-// cargo run --features "json" --no-default-features -- list
+//
+// cargo run -- list -> json
+// cargo run --features "mongodb" --no-default-features -> mongodb
 //
 // TODO: Вынести трейты, use_cases и базовые сущности в отдельный модуль core
 // TODO: separate to web_gui(with handlers) + routes

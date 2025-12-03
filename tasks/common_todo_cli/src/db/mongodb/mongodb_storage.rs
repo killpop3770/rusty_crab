@@ -6,8 +6,8 @@ use mongodb::{
 };
 
 use crate::{
-    db::{AsyncStorage, errors::StorageError},
-    model::task::{Task, TaskDocument},
+    db::{AsyncStorage, errors::StorageError, mongodb::TaskDocument},
+    model::task::Task,
 };
 
 #[derive(Debug, Clone)]

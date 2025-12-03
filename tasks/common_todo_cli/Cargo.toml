@@ -4,22 +4,30 @@ version = "0.1.0"
 edition = "2024"
 
 [features]
-default = []
-json = []
-postgres = []
-mongodb = []
+default = ["json"]
+json = ["dep:serde_json"]
+postgres = ["dep:sqlx"]
+mongodb = ["dep:mongodb", "dep:futures-util"]
 
 [dependencies]
 uuid = "1.18.1"
 serde = { version = "1.0.228", features = ["derive"] }
-serde_json = "1.0.145"
 clap = { version = "4.5.49", features = ["derive"] }
 thiserror = "2.0.17"
 anyhow = "1.0.100"
 tokio = { version = "1.0", features = ["full"] }
 axum = { version = "0.8.6", features = ["macros"] }
-sqlx = { version = "0.8.6", features = ["postgres", "runtime-tokio"] }
 async-trait = "0.1.89"
 config = "0.15.19"
-mongodb = "3.4.1"
-futures-util = { version = "0.3", default-features = false, features = ["std"] }
+
+serde_json = { version = "1.0.145", optional = true }
+
+sqlx = { version = "0.8.6", features = [
+    "postgres",
+    "runtime-tokio",
+], optional = true }
+
+mongodb = { version = "3.4.1", optional = true }
+futures-util = { version = "0.3", default-features = false, features = [
+    "std",
+], optional = true }
